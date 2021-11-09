@@ -77,7 +77,7 @@ namespace RealHand {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/RealHand;V1.0.0.0;component/debugwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/RealHand;component/debugwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\DebugWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

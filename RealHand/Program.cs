@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 using System.Numerics;
+using System.Diagnostics;
 
 namespace RealHand
 {
@@ -31,7 +32,7 @@ namespace RealHand
             bool DebugMode = true;
             DebugWindow debugWindow = null;
             var mediaPipeHand = new MediaPipeHand();
-            var realHand = new RealHand(mediaPipeHand.Structure);
+            var realHand = new RealHandmark(mediaPipeHand.Structure);
 
 
             // Create and config the pipeline to strem color and depth frames.
@@ -126,7 +127,7 @@ namespace RealHand
                         mediaPipeHand.setJsonData(str);
                         var elData = mediaPipeHand.Data;
                         debugString = "X:" + elData[8].X.ToString() + "Y:" + elData[8].Y.ToString() + "Z:" + elData[8].Z.ToString();
-
+                        Trace.WriteLine("before calculate");
                         realHand.calculateWithDepth(mediaPipeHand.Data, depthFrame, colorFrame);
                      
 
@@ -235,12 +236,12 @@ namespace RealHand
         }
 
     }
-    public class RealHand
+    public class RealHandmark
     {
         public int[,] Structure;
         public List<List<int>> ReStructure;
         public List<HandLandmark> Data { get;}
-        public RealHand(int[,] structure)
+        public RealHandmark(int[,] structure)
         {
             Structure = structure;
             List<List<int>> tempList = new List<List<int>>();
