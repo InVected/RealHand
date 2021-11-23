@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "x2p4nWeNQoD7j1U6QU9yUpj227pjLMqnlOdSYyAHbncSNmzt8mkgJ+P7dOVgpXde0FQabbFKrAr8n8DiegbalA==",
+  "dgSpecHash": "2ocmhSJoWEZk4WWcD1N3APRE80hdw3lU0OVLVQMl5FPHNU6NhAIc8SOqNqADXEeIC/G1TnOeFoKdPbI2zWZ0AQ==",
   "success": true,
   "projectFilePath": "C:\\dev\\RealHand\\RealHand\\RealHand.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Ben\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+    "C:\\Users\\Ben\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\Ben\\.nuget\\packages\\writeablebitmapex\\1.6.8\\writeablebitmapex.1.6.8.nupkg.sha512"
   ],
   "logs": []
 }

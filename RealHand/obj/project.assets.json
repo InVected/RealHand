@@ -10,6 +10,15 @@
         "runtime": {
           "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
+      },
+      "WriteableBitmapEx/1.6.8": {
+        "type": "package",
+        "compile": {
+          "lib/netcoreapp3.0/WriteableBitmapEx.Wpf.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/WriteableBitmapEx.Wpf.dll": {}
+        }
       }
     }
   },
@@ -40,11 +49,54 @@
         "newtonsoft.json.nuspec",
         "packageIcon.png"
       ]
+    },
+    "WriteableBitmapEx/1.6.8": {
+      "sha512": "DmMeRt3Zr+xu21U9uY9baniMlX86nSKRBoUvFXZilsk553Him37OX04nE2ctJtPHONbVD/iB1dsIfQx+r1LH0Q==",
+      "type": "package",
+      "path": "writeablebitmapex/1.6.8",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/NetCore45/WriteableBitmapEx.WinRT.dll",
+        "lib/NetCore45/WriteableBitmapEx.WinRT.pdb",
+        "lib/NetCore45/WriteableBitmapEx.WinRT.xml",
+        "lib/WindowsPhone8/WriteableBitmapExWinPhone.XML",
+        "lib/WindowsPhone8/WriteableBitmapExWinPhone.dll",
+        "lib/WindowsPhone8/WriteableBitmapExWinPhone.pdb",
+        "lib/WindowsPhone8/WriteableBitmapExWinPhoneXnaDependant.XML",
+        "lib/WindowsPhone8/WriteableBitmapExWinPhoneXnaDependant.dll",
+        "lib/WindowsPhone8/WriteableBitmapExWinPhoneXnaDependant.pdb",
+        "lib/net40/WriteableBitmapEx.Wpf.dll",
+        "lib/net40/WriteableBitmapEx.Wpf.pdb",
+        "lib/net40/WriteableBitmapEx.Wpf.xml",
+        "lib/netcoreapp3.0/WriteableBitmapEx.Wpf.deps.json",
+        "lib/netcoreapp3.0/WriteableBitmapEx.Wpf.dll",
+        "lib/netcoreapp3.0/WriteableBitmapEx.Wpf.pdb",
+        "lib/sl4-wp71/WriteableBitmapExWinPhone.XML",
+        "lib/sl4-wp71/WriteableBitmapExWinPhone.dll",
+        "lib/sl4-wp71/WriteableBitmapExWinPhone.pdb",
+        "lib/sl4-wp71/WriteableBitmapExWinPhoneXnaDependant.XML",
+        "lib/sl4-wp71/WriteableBitmapExWinPhoneXnaDependant.dll",
+        "lib/sl4-wp71/WriteableBitmapExWinPhoneXnaDependant.pdb",
+        "lib/sl4/WriteableBitmapEx.XML",
+        "lib/sl4/WriteableBitmapEx.dll",
+        "lib/sl4/WriteableBitmapEx.pdb",
+        "lib/uap/WriteableBitmapEx.Uwp.XML",
+        "lib/uap/WriteableBitmapEx.Uwp.dll",
+        "lib/uap/WriteableBitmapEx.Uwp.pdb",
+        "lib/uap/WriteableBitmapEx.Uwp.pri",
+        "lib/wpa81/WriteableBitmapEx.WinRT.dll",
+        "lib/wpa81/WriteableBitmapEx.WinRT.pdb",
+        "lib/wpa81/WriteableBitmapEx.WinRT.xml",
+        "writeablebitmapex.1.6.8.nupkg.sha512",
+        "writeablebitmapex.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     "net5.0-windows7.0": [
-      "Newtonsoft.Json >= 13.0.1"
+      "Newtonsoft.Json >= 13.0.1",
+      "WriteableBitmapEx >= 1.6.8"
     ]
   },
   "packageFolders": {
@@ -94,6 +146,10 @@
           "Newtonsoft.Json": {
             "target": "Package",
             "version": "[13.0.1, )"
+          },
+          "WriteableBitmapEx": {
+            "target": "Package",
+            "version": "[1.6.8, )"
           }
         },
         "imports": [

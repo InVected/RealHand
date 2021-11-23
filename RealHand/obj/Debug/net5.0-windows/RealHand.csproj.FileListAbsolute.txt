@@ -22,3 +22,4 @@ C:\dev\RealHand\RealHand\obj\Debug\net5.0-windows\RealHand.genruntimeconfig.cach
 C:\dev\RealHand\RealHand\bin\Debug\net5.0-windows\Intel.Realsense.dll
 C:\dev\RealHand\RealHand\obj\Debug\net5.0-windows\RealHand.csproj.AssemblyReference.cache
 C:\dev\RealHand\RealHand\bin\Debug\net5.0-windows\Newtonsoft.Json.dll
+C:\dev\RealHand\RealHand\bin\Debug\net5.0-windows\WriteableBitmapEx.Wpf.dll

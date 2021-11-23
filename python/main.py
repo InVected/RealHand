@@ -44,8 +44,11 @@ with mp_hands.Hands(
         if results.multi_hand_landmarks:
             hasResults = True
             hand = results.multi_hand_landmarks[handNumber] #results.multi_hand_landmarks returns landMarks for all the hands
+            image
             for id, landMark in enumerate(hand.landmark):
-                jsonData = {'id': id,'x': landMark.x ,'y':landMark.y, 'z': landMark.z}
+                pixelLandmarkX = round(landMark.x*width)
+                pixelLandmarkY = round(landMark.y*height)
+                jsonData = {'id': id,'x': pixelLandmarkX ,'y':pixelLandmarkY, 'relZ': landMark.z}
                 handData.append(jsonData)
 
             if Debug:
