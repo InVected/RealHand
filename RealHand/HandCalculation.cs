@@ -9,9 +9,51 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
+
 
 namespace RealHand
 {
+    public class RealLandmark
+    {
+        public int ID { get; set; }
+        public Vector3 Coordinat { get; set; }
+        public bool Visibility { get; set; }
+        public RealLandmark(int id, Vector3 coordinat)
+        {
+            ID = id;
+            Coordinat = coordinat;
+            Visibility = false;
+
+        }
+        public RealLandmark(int id, Vector3 coordinat, bool visibility)
+        {
+            ID = id;
+            Coordinat = coordinat;
+            Visibility = visibility;
+
+        }
+        public RealLandmark(int id, float x, float y, float z)
+        {
+            ID = id;
+            Coordinat = new Vector3(x, y, z);
+            Visibility = false;
+
+        }
+        public RealLandmark(int id, float x, float y, float z, bool visibility)
+        {
+            ID = id;
+            Coordinat = new Vector3(x, y, z);
+            Visibility = visibility;
+
+        }
+        public RealLandmark Clone()
+        {
+            return new RealLandmark(ID, Coordinat, Visibility);
+        }
+    }
+
     public class HandLandmark
     {
         //public string Name { get; set; }
@@ -168,25 +210,31 @@ namespace RealHand
             }
             return landmarkList;
         }
-        public unsafe HandLandmark[] calculateWithDepth(HandLandmark[] landmarkList, DepthFrame depthFrame, VideoFrame colorFrame, DebugWindow debugWindow)
-        {
-            HandLandmark[] VisibleLandmarkList = getVisibleList(landmarkList, colorFrame, debugWindow);
 
-            /*foreach (HandLandmark handLandmark in VisibleLandmarkList)
+        public unsafe HandLandmark[] calculateWithDepth(HandLandmark[] VisibleLandmarkList, DepthFrame depthFrame, VideoFrame colorFrame, DebugWindow debugWindow, Intrinsics intrinsics)
+        {
+            RealLandmark[] RealLandmarkArray = new RealLandmark[VisibleLandmarkList.GetLength(0)];
+            int counter=0;
+            for (int i =0; i< VisibleLandmarkList.GetLength(0); i++)
             {
-                if (handLandmark.Visibility)
+                if (VisibleLandmarkList[i].Visibility)
                 {
-                    //get Real coordinates
+                    RealLandmarkArray[i] = RealWorldCoordinates(VisibleLandmarkList[i], colorFrame, depthFrame, intrinsics);
+                    RealLandmarkArray[i].Visibility = true;
+                    counter++;
                 }
+                else
+                {
+                    RealLandmarkArray[i] = new RealLandmark(VisibleLandmarkList[i].ID, VisibleLandmarkList[i].X, VisibleLandmarkList[i].Y, VisibleLandmarkList[i].Z);
+                }
+                
             }
-            // calculate formula to interpolate Occludet landmarks
-            foreach (HandLandmark handLandmark in VisibleLandmarkList)
-            {
-                if (!handLandmark.Visibility)
-                {
-                    //calculate Real coordinates with formular
-                }
-            }*/
+            double factor = DepthFactor(RealLandmarkArray, VisibleLandmarkList, counter);
+
+
+
+
+
             return VisibleLandmarkList;
         }
         public bool hasData()
@@ -237,45 +285,6 @@ namespace RealHand
             return false;
         }
 
-        /*private void OcclusionControle(HandLandmark[] LandmarkList)
-        {
-
-            HandLandmark[] SortedLandmarkList = new HandLandmark[LandmarkList.GetLength(0)];
-            for (int i = 0; i < LandmarkList.GetLength(0); i++)
-            {
-                SortedLandmarkList[i] = LandmarkList[i].Clone();
-            }
-            //sort list
-            float factor = 20.0F;
-            for (int k = 0; k < SortedLandmarkList.GetLength(0); k++)
-            {
-                var continuer = false;
-                HandLandmark backPoint = SortedLandmarkList[k];
-                for (int m = k + 1; m < SortedLandmarkList.GetLength(0); m++)
-                {
-                    HandLandmark frontPoint = SortedLandmarkList[m];
-
-                    foreach (int joint in ReStructure[m])
-                    {
-                        
-                        HandLandmark jointPoint = SortedLandmarkList[joint];
-                        if (frontPoint.Z < jointPoint.Z) { 
-                        Vector2 pointJoint = new Vector2(jointPoint.X, jointPoint.Y);
-                        Vector2 pointFront = new Vector2(frontPoint.X, frontPoint.Y);
-                        Vector2 pointBack = new Vector2(backPoint.X, backPoint.Y);
-                        bool result = isOccluded(pointJoint, pointFront, pointBack);
-                        if (result)
-                        {
-                            LandmarkList[SortedLandmarkList[k].ID].Visibility = false;
-                            continuer = true;
-                            break;
-                        }
-                    }
-                    }
-                    if (continuer) continue;
-                }
-            }
-        }*/
         private unsafe void OcclusionControle(HandLandmark[] LandmarkList, DebugWindow debugWindow)
         {
 
@@ -327,8 +336,6 @@ namespace RealHand
                 var reziprokeDeterminante = 1.0 / (jointLine.X * einheitsOrtogonal.Y - jointLine.Y * einheitsOrtogonal.X);
 
 
-
-                if (true)
                 {
                     foreach (HandLandmark backPoint in SortedLandmarkList)
                     {
@@ -356,106 +363,87 @@ namespace RealHand
 
                     }
                 }
-                else
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        for (int y = 0; y < height; y++)
-                        {
-                            Vector2 pointBack = new Vector2(x, y);
-                            Vector2 u = Vector2.Subtract(pointJointB, pointBack);
-                            var lambda = reziprokeDeterminante * (u.X * einheitsOrtogonal.Y - u.Y * einheitsOrtogonal.X); // relativ position of intersection on jointLine
-                            var delta = reziprokeDeterminante * (u.Y * jointLine.X - u.X * jointLine.Y); //distance point to jointLine
-                            if (lambda <= 1.0 && lambda >= 0.0 && Math.Abs(delta) <= factor)
-                            {
-                                var localLambdaZ = jointB.Z + lambda * (jointA.Z - jointB.Z);
-                                int index = x + y * width;
-                                pointer[index].R = (byte)(255.0*(localLambdaZ - minZ)/ (maxZ - minZ));
-                                pointer[index].G = (byte)(255.0*(localLambdaZ - minZ)/ (maxZ - minZ));
-                                pointer[index].B = (byte)(255.0*(localLambdaZ - minZ)/ (maxZ - minZ));
 
-                            }
-                        }
-                    }
-                }
-
-
-                
                 //=============================================================================
 
-            }/*
-            for ( int backpointPos = 0; backpointPos < SortedLandmarkList.Length; backpointPos++)
-            {
-                HandLandmark pointBack = SortedLandmarkList[backpointPos];
-                if (LandmarkList[pointBack.ID].Visibility == true)
-                {
-                    
-                    for (int frontPointPos = backpointPos + 1; frontPointPos < SortedLandmarkList.Length; frontPointPos++ )
-                    {
-                        HandLandmark pointFront = SortedLandmarkList[frontPointPos];
-                        double distanceQuad = Math.Pow(pointBack.X - pointFront.X, 2) + Math.Pow(pointBack.Y - pointFront.Y, 2);
-                        if (distanceQuad <= factor * factor)
-                        {
-                            LandmarkList[pointBack.ID].Visibility = false;
-                            break;
-                        }
-                    }
-                }
-
-            }*/
+            }
         }
-        /*
-        private void OcclusionControle(HandLandmark[] LandmarkList)
+     private RealLandmark RealWorldCoordinates(HandLandmark handLandmark, VideoFrame colorFrame, DepthFrame depthFrame, Intrinsics intrinsics)
         {
+           
+            var xM = handLandmark.X;
+            var yM = handLandmark.Y;
+            Vector2 point2D = new Vector2(xM, yM);
+            float depth = depthFrame.GetDistance(xM, yM);
+            var point3D = Map2DTo3D(intrinsics, point2D, depth);
+            RealLandmark landmark = new RealLandmark(handLandmark.ID, point3D);
+            
+            return landmark;
 
-            HandLandmark[] SortedLandmarkList = new HandLandmark[LandmarkList.Length];
-            for (int i = 0; i < LandmarkList.Length; i++)
+        }
+        public Vector3 Map2DTo3D(Intrinsics intrinsics, Vector2 pixel, float depth)
+        {
+            Vector3 point = new Vector3();
+
+            float x = (pixel.X - intrinsics.ppx) / intrinsics.fx;
+            float y = (pixel.Y - intrinsics.ppy) / intrinsics.fy;
+
+            if (intrinsics.model == Distortion.InverseBrownConrady)
             {
-                SortedLandmarkList[i] = LandmarkList[i].Clone();
+                float r2 = x * x + y * y;
+                float f = 1 + intrinsics.coeffs[0] * r2 + intrinsics.coeffs[1] * r2 * r2 + intrinsics.coeffs[4] * r2 * r2 * r2;
+                float ux = x * f + 2 * intrinsics.coeffs[2] * x * y + intrinsics.coeffs[3] * (r2 + 2 * x * x);
+                float uy = y * f + 2 * intrinsics.coeffs[3] * x * y + intrinsics.coeffs[2] * (r2 + 2 * y * y);
+
+                x = ux;
+                y = uy;
             }
-            //sort List
-            float factor = 20.0F;
-            for (int k = 0; k < SortedLandmarkList.Length; k++)
-            {
-                var continuer = false;
-                HandLandmark backPoint = SortedLandmarkList[k];
-                for (int m = k + 1; m < SortedLandmarkList.Length; m++)
-                {
-                    HandLandmark frontPoint = SortedLandmarkList[m];
-                    double distanceQuad = Math.Pow(backPoint.X - frontPoint.X, 2) + Math.Pow(backPoint.Y - frontPoint.Y, 2);
-                    if (distanceQuad <= factor * factor)
-                    {
-                        LandmarkList[SortedLandmarkList[k].ID].Visibility = false;
-                        continue;
-                    }
-                    foreach (int joint in ReStructure[m])
-                    {
-                        HandLandmark jointPoint = SortedLandmarkList[joint];
-                        if (frontPoint.Z < jointPoint.Z)
-                        {
-                            Vector2 pointJoint = new Vector2(jointPoint.X, jointPoint.Y);
-                            Vector2 pointFront = new Vector2(frontPoint.X, frontPoint.Y);
-                            Vector2 pointBack = new Vector2(backPoint.X, backPoint.Y);
-                            Vector2 jointLine = Vector2.Subtract(pointJoint, pointFront);
-                            Vector2 ortogonal = new Vector2(jointLine.Y, -jointLine.X);
-                            Vector2 einheitsOrtogonal = Vector2.Normalize(ortogonal);
-                            Vector2 u = Vector2.Subtract(pointFront, pointBack);
-                            var reziprokeDeterminante = 1.0 / (jointLine.X * einheitsOrtogonal.Y - jointLine.Y * einheitsOrtogonal.X);
-                            var lambda = reziprokeDeterminante * (u.X * einheitsOrtogonal.Y - u.Y * einheitsOrtogonal.X); // relativ position of intersection on jointLine
-                            var delta = reziprokeDeterminante * (u.Y * jointLine.X - u.X * jointLine.Y); //distance point to jointLine
-                            if (lambda <= 1.0 && lambda >= 0.0 && Math.Abs(delta) <= factor)
-                            {
-                                LandmarkList[SortedLandmarkList[k].ID].Visibility = false;
-                                continuer = true;
-                                break;
-                            }
-                        }
 
-                    }
-                    if (continuer) continue;
+            point.X = depth * x;
+            point.Y = depth * y;
+            point.Z = depth;
+
+            return point;
+        }
+        private double DepthFactor(RealLandmark[] realLandmarkArray, HandLandmark[] handLandmarkArray, int counter)
+        {
+           
+            double[,] aArray = new double[counter,2];
+            double[,] bArray = new double[counter,1];
+
+            for (int r = 0; r < handLandmarkArray.GetLength(0); r++)
+            {
+                if (handLandmarkArray[r].Visibility)
+                {
+                    aArray[(counter) - 1, 0] = handLandmarkArray[r].Z;
+                    aArray[(counter) - 1, 1] = 1;
+                    bArray[(counter) - 1,0] = realLandmarkArray[r].Coordinat.Z;
+                    counter--;
                 }
             }
-        }*/
+            Matrix<double> A = DenseMatrix.OfArray(aArray);
+            Matrix<double> b = DenseMatrix.OfArray(bArray);
+            var x = A.Transpose().Multiply(A).Inverse().Multiply(A.Transpose().Multiply(b));
+            Trace.WriteLine(x);
+            var counterValue = 0;
+            var differenzValue = 0.0;
+            for (int r = 0; r < realLandmarkArray.GetLength(0); r++)
+            {
+                if (realLandmarkArray[r].Visibility)
+                {
+                    var zR = realLandmarkArray[r].Coordinat.Z;
+                    var zM = handLandmarkArray[r].Z;
+                    var zValue = zM * x[0,0] + x[1,0];
+                    var differenz = Math.Abs( zR - zValue);
+                    differenzValue = differenzValue + differenz;
+                    counterValue++;
+                }
 
+            }
+            Trace.WriteLine(differenzValue / counterValue);
+            
+
+            return 0;
+        }
     }
 }

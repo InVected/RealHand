@@ -22,11 +22,6 @@ namespace RealHand
         [STAThread]
         static void Main(string[] args)
         {
-
-
-
- 
-
             
             bool DebugMode = true;
             List<HandLandmark> handData = new List<HandLandmark>();
@@ -40,6 +35,7 @@ namespace RealHand
 
             // Create and config the pipeline to strem color and depth frames.
             Pipeline pipeline = new Pipeline();
+            
 
             var ctx = new Context();
             var devices = ctx.QueryDevices();
@@ -70,48 +66,49 @@ namespace RealHand
             var server = new NamedPipeServerStream("NPtest");
 
             Trace.WriteLine("Waiting for connection...");
-            //======================================================
+            //======================================================v Python
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             startInfo.FileName = "python.exe";
             startInfo.Arguments = "C:\\dev\\RealHand\\python\\main.py";
             process.StartInfo = startInfo;
             process.Start();
-            //======================================================
+            //======================================================^ Python
             server.WaitForConnection();
 
             Trace.WriteLine("Connected.");
             var br = new System.IO.BinaryReader(server);
             var bw = new System.IO.BinaryWriter(server);
             var pp = pipeline.Start(cfg);
+            Intrinsics intrinsics = pp.GetStream(Stream.Color).As<VideoStreamProfile>().GetIntrinsics(); // intrinsics of Colorframe
 
             DebugWindow debugWindow = null;
 
             if (DebugMode)
             {
-                var windowThread = new Thread(() =>
-                {
-
-                    debugWindow = new DebugWindow(depthProfile.Width, depthProfile.Height, colorProfile.Width, colorProfile.Height);
-                    debugWindow.ShowDialog();
-                });
-                windowThread.SetApartmentState(ApartmentState.STA);
-                windowThread.IsBackground = true;
-                windowThread.Start();
+                //var windowThread = new Thread(() =>
+                //{
+                    debugWindow = new DebugWindow(colorProfile.Width, colorProfile.Height, colorProfile.Width, colorProfile.Height);
+                    debugWindow.Show();
+                //});
+                //windowThread.SetApartmentState(ApartmentState.STA);
+                //windowThread.IsBackground = true;
+                //windowThread.Start();
             }
 
-            while (true)
+            while (!process.HasExited)
             {
 
-                // We wait for the next available FrameSet and using it as a releaser object that would track
-                // all newly allocated .NET frames, and ensure deterministic finalization
-                // at the end of scope. 
                 using (var frames = pipeline.WaitForFrames())
                 {
-                    VideoFrame colorFrame = frames.ColorFrame.DisposeWith(frames); //------------------- getting the frames
-                    DepthFrame depthFrame = frames.DepthFrame.DisposeWith(frames);//--------------------
+                    Align align = new Align(Stream.Color).DisposeWith(frames);
+                    Intel.RealSense.Frame aligned = align.Process(frames).DisposeWith(frames);
+                    FrameSet alignedFrameset = aligned.As<FrameSet>().DisposeWith(frames);
+                    VideoFrame colorFrame = alignedFrameset.ColorFrame.DisposeWith(alignedFrameset); //------------------- getting the frames
+                    DepthFrame alignedDepthFrame = alignedFrameset.DepthFrame.DisposeWith(alignedFrameset);//--------------------
+                    DepthFrame depthFrame = frames.DepthFrame.DisposeWith(frames);
 
-                    var colorizedDepth = colorizer.Process<VideoFrame>(depthFrame).DisposeWith(frames);
+                    var colorizedDepth = colorizer.Process<VideoFrame>(alignedDepthFrame).DisposeWith(alignedFrameset);
                     //=====================================
                     byte[] byteArray = new byte[colorFrame.DataSize];
                     Marshal.Copy(colorFrame.Data, byteArray, 0, colorFrame.DataSize);
@@ -138,7 +135,7 @@ namespace RealHand
                     unsafe
                     {
                         HandLandmark[] onlyVisisibleList = realHand.getVisibleList(mediaPipeHand.Data, colorFrame, debugWindow); //change to not only
-                        realHand.calculateWithDepth(mediaPipeHand.Data, depthFrame, colorFrame, debugWindow);
+                        realHand.calculateWithDepth(onlyVisisibleList, depthFrame, colorFrame, debugWindow, intrinsics);
 
 
                         int[,] jointStructure = mediaPipeHand.Structure;
