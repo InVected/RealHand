@@ -27,11 +27,11 @@ namespace RealHand
                var colorwbmp = imgColor.Source as WriteableBitmap;
                var colorrect = new Int32Rect(0, 0, colorWidth, colorHeight);
                colorwbmp.WritePixels(colorrect, colorData, colorStride * colorHeight, colorStride);
-               if (LandmarkList != null && LandmarkList.Length != 0)
+               if (LandmarkList != null && LandmarkList.Length != 0) // Hand Detected
                {
                    float max = LandmarkList[0].Z;
                    float min = LandmarkList[0].Z;
-                   foreach (RelativHandLandmark landmark in LandmarkList)
+                   foreach (RelativHandLandmark landmark in LandmarkList) // getting max and min
                    {
                        if (landmark.Z > max)
                        {
@@ -44,7 +44,7 @@ namespace RealHand
                        }
                    }
 
-                   for (int i = 0; i < jointStructure.GetLength(0); i++)
+                   for (int i = 0; i < jointStructure.GetLength(0); i++) // Drawing Landmark Joints
                    {
 
                        RelativHandLandmark landmark1 = LandmarkList[jointStructure[i, 0]];
@@ -87,6 +87,7 @@ namespace RealHand
            });
 
             Dispatcher.Invoke(DispatcherPriority.Render, updateImage, LandmarkList, jointStructure, depthData, depthStride, depthWidth, depthHeight, colorData, colorStride, colorWidth, colorHeight);
+            // Displayed Datapoints
             Dispatcher.Invoke(new Action(() =>
                  {
                      if (LandmarkList != null && LandmarkList.Length != 0) { 
@@ -136,6 +137,7 @@ namespace RealHand
             public byte G;
             public byte B;
         }
+        
         public unsafe RGB* GetPixelPointer()
         {
             var bmp = imgColor.Source as WriteableBitmap;
@@ -147,6 +149,7 @@ namespace RealHand
                 return pixelPointer;
             }
         }
+        //Draw Single Pixel on Image
         private void DrawPixel(int x, int y, Color color)
         {
             byte RColor = color.R;
@@ -168,6 +171,7 @@ namespace RealHand
                 pixels[pixelStartByte + 2] = BColor;
             }
         }
+        //Draw Single Point on Image
         private static void DrawPoint(WriteableBitmap bmp, int xc, int yc, int r, Color color)
         {
             byte RColor = color.R;
@@ -206,6 +210,7 @@ namespace RealHand
                 }
             }
         }
+        //Draw Single Line on Image
         private static void DrawLine(WriteableBitmap bmp, int xa, int ya, int xb, int yb, int thickness, Color color, Color color2)
         {
             var alphaAngle = -Math.Atan2(yb - ya, xb - xa);

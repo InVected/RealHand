@@ -51,7 +51,7 @@ namespace RealHand
     }
     public class RelativHandLandmark
     {
-        //public string Name { get; set; }
+ 
         public int ID { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
@@ -86,7 +86,7 @@ namespace RealHand
         }
     }
 
-    public class TransformToReal
+    public class TransformToReal //Measure visible Points and Calculate the not visible
     {
         public int[,] Structure { get; set; }
         public List<int>[] ReStructure;
@@ -154,7 +154,7 @@ namespace RealHand
             if (Data != null) return false;
             else return true;
         }
-        private static void BorderControle(RelativHandLandmark[] LandmarkList, VideoFrame colorFrame)
+        private static void BorderControle(RelativHandLandmark[] LandmarkList, VideoFrame colorFrame) // if point is visible in boundaries
         {
             int width = colorFrame.Width;
             int height = colorFrame.Height;
@@ -172,7 +172,7 @@ namespace RealHand
 
             }
         }
-        private unsafe void OcclusionControle(RelativHandLandmark[] LandmarkList)
+        private unsafe void OcclusionControle(RelativHandLandmark[] LandmarkList) // calculation if point is occluded 
         {
 
             RelativHandLandmark[] SortedLandmarkList = new RelativHandLandmark[LandmarkList.Length];
@@ -238,11 +238,11 @@ namespace RealHand
 
             }
         }
-        private AbsoluteHandLandmark RealWorldCoordinates(RelativHandLandmark handLandmark, VideoFrame colorFrame, DepthFrame depthFrame, Intrinsics intrinsics)
+        private AbsoluteHandLandmark RealWorldCoordinates(RelativHandLandmark handLandmark, VideoFrame colorFrame, DepthFrame depthFrame, Intrinsics intrinsics) //Measurement and Calculation to Realword Coordinates
         {
 
-            var xM = handLandmark.X / 2;  //????depthframe only half the size as ColorFrame
-            var yM = handLandmark.Y / 2;  //????depthframe only half the size as ColorFrame
+            var xM = handLandmark.X / 2;  
+            var yM = handLandmark.Y / 2;  
             Vector2 point2D = new(xM, yM);
             Vector2 depthFrameSize = new(depthFrame.Width, depthFrame.Height);
             Vector2 colorFrameSize = new(colorFrame.Width, colorFrame.Height);
@@ -256,8 +256,8 @@ namespace RealHand
         private AbsoluteHandLandmark RealWorldCoordinates(RelativHandLandmark handLandmark, VideoFrame colorFrame, DepthFrame depthFrame, Intrinsics intrinsics, Matrix factorMatrix)
         {
             var depth = (float)(handLandmark.Z * factorMatrix[0, 0] + factorMatrix[1, 0]);
-            var xM = handLandmark.X / 2;  //????depthframe only half the size as ColorFrame
-            var yM = handLandmark.Y / 2;  //????depthframe only half the size as ColorFrame
+            var xM = handLandmark.X / 2;  
+            var yM = handLandmark.Y / 2;  
             Vector2 point2D = new(xM, yM);
             Vector2 depthFrameSize = new(depthFrame.Width, depthFrame.Height);
             Vector2 colorFrameSize = new(colorFrame.Width, colorFrame.Height);
@@ -291,7 +291,7 @@ namespace RealHand
 
             return point;
         }
-        private static Matrix DepthFactor(AbsoluteHandLandmark[] realLandmarkArray, RelativHandLandmark[] handLandmarkArray, int counter)
+        private static Matrix DepthFactor(AbsoluteHandLandmark[] realLandmarkArray, RelativHandLandmark[] handLandmarkArray, int counter) // Calculating Matrix for not Visible Landmarks
         {
 
             double[,] aArray = new double[counter, 2];
@@ -309,7 +309,7 @@ namespace RealHand
             }
             Matrix<double> A = DenseMatrix.OfArray(aArray);
             Matrix<double> b = DenseMatrix.OfArray(bArray);
-            Matrix x = (Matrix)A.Transpose().Multiply(A).Inverse().Multiply(A.Transpose().Multiply(b)); // casting to Matrix...why?
+            Matrix x = (Matrix)A.Transpose().Multiply(A).Inverse().Multiply(A.Transpose().Multiply(b)); 
             //Trace.WriteLine(x);
             var counterValue = 0;
             var differenzValue = 0.0;
@@ -330,12 +330,11 @@ namespace RealHand
 
             return x;
         }
-    }
+    } 
 
     //========== Specified Handmodels === v
     public class MediaPipeHand
     {
-        //public string Name { get; set; }
         public RelativHandLandmark[] Data { get; set; }
         public int[,] Structure { get; }
 

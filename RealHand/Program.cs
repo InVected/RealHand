@@ -15,7 +15,7 @@ namespace RealHand
 {
     class Program
     {
-        static bool DebugMode = true;
+        static bool DebugMode = true; // To Activate/Deactivate DebugWindow
         [STAThread]
         static void Main(string[] args)
         {
@@ -33,7 +33,7 @@ namespace RealHand
             {
                 var watch = new System.Diagnostics.Stopwatch();
                 watch.Start();
-                RelativHandLandmark[] outputData = loadProgram(startupData); //generating Data for 
+                RelativHandLandmark[] outputData = loadProgram(startupData); //Generating Data for Output
                 if (outputData is not null) {
 
                     string[] jsonArray = new string[21];
@@ -43,7 +43,7 @@ namespace RealHand
                         jsonArray[i] = JsonConvert.SerializeObject(outputData[i]);
 
                     }
-                    string jsonArrayJ = JsonConvert.SerializeObject(jsonArray); ;
+                    string jsonArrayJ = JsonConvert.SerializeObject(jsonArray); //Output Data as JSON
                     //Trace.WriteLine(jsonArrayJ);
                     //unityWriter.Write(jsonArrayJ);  //sends Data to unity
                 }
@@ -70,7 +70,7 @@ namespace RealHand
             
             Trace.WriteLine("output UpdateImages");
 
-            // Create and config the pipeline to strem color and depth frames.
+            // Create and config the pipeline to stream color and depth frames.
             Pipeline pipeline = new();
 
             // --------- initialisation RealSense Cameras --------------v
@@ -98,8 +98,8 @@ namespace RealHand
                                 .Select(p => p.As<VideoStreamProfile>()).First();
 
             var cfg = new Config();
-            cfg.EnableStream(Stream.Depth, depthProfile.Width, depthProfile.Height, depthProfile.Format, 30);
-            cfg.EnableStream(Stream.Color, colorProfile.Width, colorProfile.Height, colorProfile.Format, 30);
+            cfg.EnableStream(Stream.Depth, depthProfile.Width, depthProfile.Height, depthProfile.Format, 30); //DepthFrame settings
+            cfg.EnableStream(Stream.Color, colorProfile.Width, colorProfile.Height, colorProfile.Format, 30); //ColorFrame settings
             // --------- initialisation RealSense Cameras --------------^
 
             //-----------------------------------------
@@ -140,7 +140,7 @@ namespace RealHand
             }
             while (!testBool) ;
 
-            connectionData cData = new();
+            connectionData cData = new(); //Data for processing loop
             cData.br = br;
             cData.bw = bw;
             cData.pipeline = pipeline;
@@ -177,8 +177,8 @@ namespace RealHand
             
             Intel.RealSense.Frame aligned = align.Process(frames).DisposeWith(frames);
             FrameSet alignedFrameset = aligned.As<FrameSet>().DisposeWith(frames);
-            VideoFrame colorFrame = alignedFrameset.ColorFrame.DisposeWith(alignedFrameset); //------------------- getting the frames
-            DepthFrame alignedDepthFrame = alignedFrameset.DepthFrame.DisposeWith(alignedFrameset);//--------------------
+            VideoFrame colorFrame = alignedFrameset.ColorFrame.DisposeWith(alignedFrameset); //------------------- getting the RGB frames
+            DepthFrame alignedDepthFrame = alignedFrameset.DepthFrame.DisposeWith(alignedFrameset);//-------------------- getting the Depth frames (aligned)
             DepthFrame depthFrame = frames.DepthFrame.DisposeWith(frames);
             var colorizedDepth = colorizer.Process<VideoFrame>(alignedDepthFrame).DisposeWith(alignedFrameset);
             //=====================================
@@ -187,11 +187,10 @@ namespace RealHand
             IntPtr dataTest = colorFrame.Data;
             string str;
             byte[] buf = byteArray;
-            bw.Write((uint)colorFrame.Width);
+            bw.Write((uint)colorFrame.Width); // write to Pipeline
             bw.Write((uint)colorFrame.Height);
 
-            // Write string length
-            bw.Write(buf);                              // Write string
+            bw.Write(buf); // Write string length
 
             int len = (int)br.ReadUInt32();           // Read string length
             mediaPipeHand.SetData(null);
@@ -205,7 +204,7 @@ namespace RealHand
                 mediaPipeHand.SetJsonData(str);
                 var elData = mediaPipeHand.Data;
                 onlyVisisibleList = realHand.GetVisibleList(mediaPipeHand.Data, colorFrame);
-                realHandOutput = realHand.CalculateWithDepth(onlyVisisibleList, depthFrame, colorFrame, intrinsics); // OOOOOOOOOOOOOO ready for Output OOOOOOOOOOOOOOO
+                realHandOutput = realHand.CalculateWithDepth(onlyVisisibleList, depthFrame, colorFrame, intrinsics); // Final Data for output
                 
             }
             unsafe
@@ -215,7 +214,7 @@ namespace RealHand
                 if (Program.DebugMode)
                 {
                    
-                    debugWindow.UpdateImages(onlyVisisibleList, jointStructure, colorizedDepth.Data, colorizedDepth.Stride, colorizedDepth.Width, colorizedDepth.Height, colorFrame.Data, colorFrame.Stride, colorProfile.Width, colorProfile.Height);
+                    debugWindow.UpdateImages(onlyVisisibleList, jointStructure, colorizedDepth.Data, colorizedDepth.Stride, colorizedDepth.Width, colorizedDepth.Height, colorFrame.Data, colorFrame.Stride, colorProfile.Width, colorProfile.Height); //DebugWindow update every Frame
 
 
                 }

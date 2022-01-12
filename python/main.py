@@ -16,24 +16,21 @@ with mp_hands.Hands(
                 min_detection_confidence=0.5,
                 min_tracking_confidence=0.5) as hands: 
     while True:
-        width = struct.unpack('I', stream.read(4))[0]
-        height = struct.unpack('I', stream.read(4))[0]     
-        videoBytes = stream.read(width*height*3)          
+        width = struct.unpack('I', stream.read(4))[0]   #Pipeline input 
+        height = struct.unpack('I', stream.read(4))[0]   #Pipeline input   
+        videoBytes = stream.read(width*height*3)   #Pipeline input       
         
         print(width)  
         print(height)
 
 
-                            # Important!!!
+                           
         image = np.frombuffer(videoBytes, dtype=np.uint8)
         image = np.reshape(image, (height, width,3))
         
-        #results = hands.process(image)
         handNumber=0
-        #image.flags.writeable = False
-        
-        #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        results = hands.process(image)
+
+        results = hands.process(image) #calculation of images
 
         # Draw the hand annotations on the image.
         #image.flags.writeable = True
@@ -48,10 +45,10 @@ with mp_hands.Hands(
             for id, landMark in enumerate(hand.landmark):
                 pixelLandmarkX = round(landMark.x*width)
                 pixelLandmarkY = round(landMark.y*height)
-                jsonData = {'id': id,'x': pixelLandmarkX ,'y':pixelLandmarkY, 'relZ': landMark.z}
+                jsonData = {'id': id,'x': pixelLandmarkX ,'y':pixelLandmarkY, 'relZ': landMark.z} #JSON for Pipeline output
                 handData.append(jsonData)
 
-            if Debug:
+            if Debug: #DebugWindow -----v
                 for hand_landmarks in results.multi_hand_landmarks:
                     mp_drawing.draw_landmarks(
                         image,
@@ -60,7 +57,6 @@ with mp_hands.Hands(
                         mp_drawing_styles.get_default_hand_landmarks_style(),
                         mp_drawing_styles.get_default_hand_connections_style())
         
-        #sendList = {'hasResults':hasResults, 'data': handData}
         dataListJson = json.dumps(handData)
         
         send = dataListJson.encode('ascii')
@@ -76,6 +72,5 @@ with mp_hands.Hands(
             imageShow = cv2.flip(image, 1)
             cv2.imshow('MediaPipe Hands', imageShow)
             cv2.waitKey(1)
-        #byte = s.read(640*360*3)
             
         
