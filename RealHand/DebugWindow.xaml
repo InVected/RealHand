@@ -11,8 +11,120 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <TextBox x:Name="debugInfo" Grid.Column="0"/>
-        <Image x:Name="imgDepth" Grid.Column="0" />
-        <Image x:Name="imgColor" Grid.Column="1" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+
+        <Image x:Name="imgDepth" Grid.Column="0" Grid.Row="0" Margin="0,33,0,8"/>
+        <Image x:Name="imgColor" Grid.Column="1" Grid.Row="0"/>
+        <Grid Grid.Column="1" Margin="0,537,0,0" Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="128*"/>
+                <RowDefinition Height="135*"/>
+                <RowDefinition Height="264*"/>
+            </Grid.RowDefinitions>
+            <TextBlock  Grid.Column="0" Grid.Row="1" Margin="0,4,0,21" Grid.RowSpan="2">
+                    <LineBreak/>
+                <Run Text="Wrist (0): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Thumb_CMC (1): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Thumb_MCP (2): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Thumb_IP (3)" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Thumb_TIP (4): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Index_Finger_MCP (5): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Index_Finger_PIP (6): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Index_Finger_DIP (7): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Index_Finger_TIP (8): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Middle_Finger_MCP (9): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Middle_Finger_PIP (10): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Middle_Finger_DIP (11): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Middle_Finger_TIP (12): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Ring_Finger_MCP (13): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Ring_Finger_PIP (14): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Ring_Finger_DIP (15): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Ring_Finger_TIP (16): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Pinky_MCP (17): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Pinky_PIP (18): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Pinky_DIP (19): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run Text="Pinky_TIP (20): " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                <LineBreak/>
+                <Run Text="Startup Time: " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                <LineBreak/>
+                <Run Text="Iteration time: " Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+
+            </TextBlock>
+            <TextBlock  Grid.Column="1" Grid.Row="1" Margin="0,4,0,21" Grid.RowSpan="2">
+                    <LineBreak/>
+                <Run x:Name="wrist" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="thumb_CMC" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="thumb_MCP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="thumb_IP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="thumb_TIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="index_Finger_MCP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="index_Finger_PIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="index_Finger_DIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="index_Finger_TIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="middle_Finger_MCP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="middle_Finger_PIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="middle_Finger_DIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="middle_Finger_TIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="ring_Finger_MCP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="ring_Finger_PIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="ring_Finger_DIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="ring_Finger_TIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="pinky_MCP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="pinky_PIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="pinky_DIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                    <LineBreak/>
+                <Run x:Name="pinky_TIP" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                <LineBreak/>
+                <Run x:Name="firstTime" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+                <LineBreak/>
+                <Run x:Name="iterationTime" Foreground="Black" FontFamily="Arial" FontSize="10" FontWeight="Bold"/>
+            </TextBlock>
+        </Grid>
     </Grid>
 </Window>
